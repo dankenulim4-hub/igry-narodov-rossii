@@ -42,13 +42,13 @@ const scenes=[
 {bg:'forest',hero:'🧟‍♀️',friend:'🐰',house:'🌼',speaker:'Зоя',text:'Зоя помогла маленькому зайчонку выбраться из колючих кустов. И вдруг из травы показалось мягкое золотое сияние. Это было сердце города!',voice:'Зоя помогла маленькому зайчонку выбраться из колючих кустов. И вдруг из травы показалось мягкое золотое сияние. Это было сердце города!'},
 {bg:'castle',hero:'🧟‍♀️',friend:'🐈‍⬛',house:'🏰',speaker:'Рассказчик',text:'Зоя вернула сердце на главную площадь. В небе вспыхнули тысячи огней, все жители закружились в танце. Зоя поняла: настоящее волшебство живёт в доброте. Конец!',voice:'Зоя вернула сердце на главную площадь. В небе вспыхнули тысячи огней, все жители закружились в танце. Зоя поняла: настоящее волшебство живёт в доброте. Конец!'}
 ];
-let index=0,playing=false,voiceOn=true,timer=null;
+let index=0,playing=false,voiceOn=true,timer=null,audioCtx=null,musicTimer=null;
 const $=id=>document.getElementById(id);
-function stop(){if(timer)clearTimeout(timer);timer=null;speechSynthesis.cancel();playing=false;$('play').textContent='▶ Продолжить';}
+function musicStart(){try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();audioCtx.resume();if(musicTimer)return;let n=0;const notes=[261.63,329.63,392,329.63,293.66,349.23,440,349.23];musicTimer=setInterval(()=>{if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=notes[n++%notes.length];g.gain.setValueAtTime(.0001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.035,audioCtx.currentTime+.06);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.55);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.6)},430)}catch(e){}}\nfunction musicStop(){if(musicTimer){clearInterval(musicTimer);musicTimer=null}}\nfunction stop(){if(timer)clearTimeout(timer);timer=null;speechSynthesis.cancel();playing=false;musicStop();$('play').textContent='▶ Продолжить';}
 function say(s){speechSynthesis.cancel();if(!voiceOn||!('speechSynthesis'in window))return;const u=new SpeechSynthesisUtterance(s.voice);u.lang='ru-RU';u.rate=.94;u.pitch=1.08;speechSynthesis.speak(u);}
 function render(){const s=scenes[index];$('stage').className='stage '+s.bg;$('hero').textContent=s.hero;$('friend').textContent=s.friend;$('house').textContent=s.house;$('speaker').textContent=s.speaker;$('line').textContent=s.text;$('bar').style.width=((index+1)/scenes.length*100)+'%';say(s);}
 function next(){if(!playing)return;if(index<scenes.length-1){index++;render();timer=setTimeout(next,10500)}else{stop();$('play').textContent='↻ Посмотреть ещё раз';}}
-$('play').onclick=()=>{if(playing){stop();return}if(index===scenes.length-1)index=0;playing=true;$('play').textContent='Ⅱ Пауза';render();timer=setTimeout(next,10500)};
+$('play').onclick=()=>{if(playing){stop();return}if(index===scenes.length-1)index=0;playing=true;$('play').textContent='Ⅱ Пауза';musicStart();render();timer=setTimeout(next,10500)};
 $('voice').onclick=()=>{voiceOn=!voiceOn;$('voice').textContent=voiceOn?'🔊 Озвучка: вкл.':'🔇 Озвучка: выкл.';speechSynthesis.cancel();if(voiceOn)say(scenes[index])};
 $('restart').onclick=()=>{stop();index=0;render();$('play').textContent='▶ Смотреть мультфильм'};
 render();
