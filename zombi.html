@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Девочка-зомби и потерянное сердце</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#17152d;color:#fff;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;display:grid;place-items:center;padding:14px}
+.player{width:min(920px,100%);background:#29234a;border:2px solid #655b91;border-radius:24px;overflow:hidden;box-shadow:0 18px 60px #0008}
+header{padding:15px 18px;display:flex;justify-content:space-between;gap:10px;align-items:center}h1{font-size:clamp(18px,4vw,27px);margin:0}.tag{font-size:12px;color:#c9c0f5}
+.stage{height:clamp(330px,58vw,510px);position:relative;overflow:hidden;background:linear-gradient(#8ed8f2 0 58%,#b9e7a2 58%);transition:background 1s}
+.sun{position:absolute;right:9%;top:8%;font-size:58px;animation:pulse 3s infinite}.cloud{position:absolute;font-size:54px;animation:drift 16s linear infinite}.c1{top:14%;left:-8%}.c2{top:30%;left:65%;animation-duration:22s}
+.hill{position:absolute;bottom:-55px;width:75%;height:170px;border-radius:50%;background:#72bd78}.h1{left:-15%}.h2{right:-20%;background:#8dd18a}
+.house{position:absolute;bottom:24%;right:10%;font-size:100px;filter:drop-shadow(0 6px 3px #0002)}
+.hero{position:absolute;bottom:16%;left:13%;font-size:clamp(92px,17vw,145px);transform-origin:bottom center;animation:bob 2.2s ease-in-out infinite;filter:drop-shadow(0 8px 3px #0003)}
+.friend{position:absolute;bottom:17%;right:22%;font-size:clamp(65px,12vw,100px);animation:bob 2.6s ease-in-out infinite}
+.spark{position:absolute;font-size:30px;animation:twinkle 1.5s infinite}
+.dialog{position:absolute;left:4%;right:4%;bottom:3%;background:#fff;color:#30284c;border-radius:18px;padding:14px 18px;min-height:88px;box-shadow:0 5px 18px #0002}
+.dialog strong{display:block;color:#7851a8;margin-bottom:4px}.dialog p{margin:0;font-size:clamp(14px,2.5vw,18px);line-height:1.35}
+.controls{padding:14px 18px 18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}.controls button{border:0;border-radius:14px;padding:12px 17px;font-weight:700;font-size:15px;background:#f5d56b;color:#35294c}.controls button.secondary{background:#51466f;color:#fff}.controls button:disabled{opacity:.4}.progress{height:7px;background:#51466f;flex:1;min-width:90px;border-radius:9px;overflow:hidden}.bar{height:100%;width:0;background:#f5d56b;transition:width .4s}.hint{padding:0 18px 15px;color:#c9c0f5;font-size:12px}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-13px) rotate(3deg)}}@keyframes drift{from{transform:translateX(-5vw)}to{transform:translateX(110vw)}}@keyframes pulse{50%{transform:scale(1.12) rotate(12deg)}}@keyframes twinkle{50%{transform:scale(.5) rotate(35deg);opacity:.3}}
+.night{background:linear-gradient(#20264d 0 58%,#374568 58%)}.night .hill{background:#343f65}.night .h2{background:#465477}
+.forest{background:linear-gradient(#8bc8a9 0 58%,#5b9c72 58%)}.castle{background:linear-gradient(#f6b8d3 0 58%,#b9d7a2 58%)}
+@media(max-width:520px){header{align-items:flex-start}.tag{max-width:90px;text-align:right}.house{right:2%;font-size:75px}.friend{right:13%}.hero{left:7%}.dialog{padding:11px 13px}}
+</style></head>
+<body><main class="player">
+<header><h1>🧟‍♀️ Девочка-зомби и потерянное сердце</h1><span class="tag">Добрый мультфильм · 5 сцен</span></header>
+<section class="stage" id="stage" aria-label="Анимированная сцена">
+<div class="sun" id="sun">☀️</div><div class="cloud c1">☁️</div><div class="cloud c2">☁️</div>
+<div class="hill h1"></div><div class="hill h2"></div>
+<div class="house" id="house">🏡</div><div class="hero" id="hero">🧟‍♀️</div><div class="friend" id="friend">🐈‍⬛</div>
+<div class="spark" style="top:23%;left:45%">✨</div><div class="spark" style="top:48%;right:40%">💫</div>
+<div class="dialog"><strong id="speaker">Рассказчик</strong><p id="line">Однажды в маленьком волшебном городке жила необычная девочка-зомби по имени Зоя…</p></div>
+</section>
+<div class="controls"><button id="play">▶ Смотреть мультфильм</button><button class="secondary" id="voice">🔊 Озвучка: вкл.</button><button class="secondary" id="restart">↻ Сначала</button><div class="progress"><div class="bar" id="bar"></div></div></div>
+<div class="hint">Голос звучит через синтезатор речи вашего телефона или браузера. Для лучшего результата включите звук устройства.</div>
+</main>
+<script>
+const scenes=[
+{bg:'',hero:'🧟‍♀️',friend:'🐈‍⬛',house:'🏡',speaker:'Рассказчик',text:'В одном уютном городке жила девочка-зомби по имени Зоя. У неё были зелёные волосы, доброе сердце и очень любопытный кот по имени Пиксель.',voice:'В одном уютном городке жила девочка-зомби по имени Зоя. У неё были зелёные волосы, доброе сердце и очень любопытный кот по имени Пиксель.'},
+{bg:'night',hero:'🧟‍♀️',friend:'🐈‍⬛',house:'🌙',speaker:'Зоя',text:'Однажды утром Зоя заметила, что волшебное сердце города исчезло! Без него праздник огней не сможет начаться.',voice:'Однажды утром Зоя заметила, что волшебное сердце города исчезло! Без него праздник огней не сможет начаться.'},
+{bg:'forest',hero:'🧟‍♀️',friend:'🦉',house:'🌳',speaker:'Сова',text:'В лесу мудрая сова подсказала: сердце спрятано там, где кто-то нуждается в помощи. Но найти дорогу можно только добрыми поступками.',voice:'В лесу мудрая сова подсказала: сердце спрятано там, где кто-то нуждается в помощи. Но найти дорогу можно только добрыми поступками.'},
+{bg:'forest',hero:'🧟‍♀️',friend:'🐰',house:'🌼',speaker:'Зоя',text:'Зоя помогла маленькому зайчонку выбраться из колючих кустов. И вдруг из травы показалось мягкое золотое сияние. Это было сердце города!',voice:'Зоя помогла маленькому зайчонку выбраться из колючих кустов. И вдруг из травы показалось мягкое золотое сияние. Это было сердце города!'},
+{bg:'castle',hero:'🧟‍♀️',friend:'🐈‍⬛',house:'🏰',speaker:'Рассказчик',text:'Зоя вернула сердце на главную площадь. В небе вспыхнули тысячи огней, все жители закружились в танце. Зоя поняла: настоящее волшебство живёт в доброте. Конец!',voice:'Зоя вернула сердце на главную площадь. В небе вспыхнули тысячи огней, все жители закружились в танце. Зоя поняла: настоящее волшебство живёт в доброте. Конец!'}
+];
+let index=0,playing=false,voiceOn=true,timer=null;
+const $=id=>document.getElementById(id);
+function stop(){if(timer)clearTimeout(timer);timer=null;speechSynthesis.cancel();playing=false;$('play').textContent='▶ Продолжить';}
+function say(s){speechSynthesis.cancel();if(!voiceOn||!('speechSynthesis'in window))return;const u=new SpeechSynthesisUtterance(s.voice);u.lang='ru-RU';u.rate=.94;u.pitch=1.08;speechSynthesis.speak(u);}
+function render(){const s=scenes[index];$('stage').className='stage '+s.bg;$('hero').textContent=s.hero;$('friend').textContent=s.friend;$('house').textContent=s.house;$('speaker').textContent=s.speaker;$('line').textContent=s.text;$('bar').style.width=((index+1)/scenes.length*100)+'%';say(s);}
+function next(){if(!playing)return;if(index<scenes.length-1){index++;render();timer=setTimeout(next,10500)}else{stop();$('play').textContent='↻ Посмотреть ещё раз';}}
+$('play').onclick=()=>{if(playing){stop();return}if(index===scenes.length-1)index=0;playing=true;$('play').textContent='Ⅱ Пауза';render();timer=setTimeout(next,10500)};
+$('voice').onclick=()=>{voiceOn=!voiceOn;$('voice').textContent=voiceOn?'🔊 Озвучка: вкл.':'🔇 Озвучка: выкл.';speechSynthesis.cancel();if(voiceOn)say(scenes[index])};
+$('restart').onclick=()=>{stop();index=0;render();$('play').textContent='▶ Смотреть мультфильм'};
+render();
+</script></body></html>
